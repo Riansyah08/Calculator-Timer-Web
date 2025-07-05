@@ -1,6 +1,6 @@
 # 🕒 Switchable Calculator & Timer
-A simple, visually appealing web application that allows users to switch between a Calculator and a Timer in one interface. Designed with an intuitive UI and responsive layout, this project demonstrates interactive DOM manipulation using vanilla JavaScript, with no external frameworks.  
-This project was developed as part of the Capstone Project for the IBM X Hacktiv8 Program, showcasing fundamental web development skills and practical problem-solving abilities.
+A simple, visually appealing web application that allows users to switch between a Calculator and a Timer in one interface. Designed with an intuitive UI and responsive layout, this project demonstrates interactive DOM manipulation using vanilla JavaScript, with no external frameworks.   
+This project was developed as a Capstone Project for the IBM X Hacktiv8 Student Developer Initiative Program, specifically under the Code Generation and Optimization with IBM Granite course.
 <br><br>
 
 ### 💻 Technologies Used
