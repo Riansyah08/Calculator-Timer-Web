@@ -1,5 +1,4 @@
 # 🕒 Switchable Calculator & Timer
-📄 Description
 A simple, visually appealing web application that allows users to switch between a Calculator and a Timer in one interface. Designed with an intuitive UI and responsive layout, this project demonstrates interactive DOM manipulation using vanilla JavaScript, with no external frameworks.
 
 ### 💻 Technologies Used
