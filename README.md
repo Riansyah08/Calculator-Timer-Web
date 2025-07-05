@@ -5,8 +5,8 @@ This project was developed as part of the Capstone Project for the IBM X Hacktiv
 
 ### 💻 Technologies Used
 - HTML5
-- CSS3 (with modern effects like gradients, shadows, and responsive design)
-- JavaScript (ES6)
+- CSS3
+- JavaScript
 <br><br>
 
 ### ✨ Features
