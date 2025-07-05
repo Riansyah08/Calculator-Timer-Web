@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Switchable Calculator/Timer</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 20px;
+        }
+
+        #switchableApp {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border: none;
+            padding: 30px;
+            border-radius: 20px;
+            width: 350px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        #switchableApp:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15);
+        }
+
+        h2 {
+            color: #333;
+            margin-bottom: 20px;
+            text-align: center;
+            font-weight: 600;
+            font-size: 1.4em;
+        }
+
+        #modeSelector {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e1e8ed;
+            border-radius: 10px;
+            font-size: 16px;
+            margin-bottom: 25px;
+            background: white;
+            color: #333;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        #modeSelector:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        #mainContent {
+            margin-bottom: 20px;
+        }
+
+        input[type="number"] {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #e1e8ed;
+            border-radius: 10px;
+            font-size: 16px;
+            text-align: right;
+            margin-bottom: 15px;
+            background: white;
+            color: #333;
+            transition: all 0.3s ease;
+        }
+
+        input[type="number"]:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        input[type="number"]::placeholder {
+            color: #999;
+        }
+
+        select:not(#modeSelector) {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e1e8ed;
+            border-radius: 10px;
+            font-size: 16px;
+            margin-bottom: 15px;
+            background: white;
+            color: #333;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        select:not(#modeSelector):focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        button {
+            width: 100%;
+            padding: 15px;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-bottom: 10px;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        button:not([onclick="stop()"]) {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        button:not([onclick="stop()"]):hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+
+        button:not([onclick="stop()"]):active {
+            transform: translateY(0);
+        }
+
+        button[onclick="stop()"] {
+            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a52 100%);
+            color: white;
+        }
+
+        button[onclick="stop()"]:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(255, 107, 107, 0.3);
+        }
+
+        button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        button:hover::before {
+            left: 100%;
+        }
+
+        #calcResult, #timerResult {
+            background: rgba(102, 126, 234, 0.1);
+            color: #333;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            font-size: 18px;
+            font-weight: 600;
+            margin-top: 15px;
+            min-height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px solid rgba(102, 126, 234, 0.2);
+        }
+
+        #timerResult {
+            font-family: 'Courier New', monospace;
+            font-size: 28px;
+            letter-spacing: 2px;
+        }
+
+        /* Animation for timer */
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        .timer-active {
+            animation: pulse 1s infinite;
+        }
+
+        /* Responsive design */
+        @media (max-width: 480px) {
+            #switchableApp {
+                width: 90%;
+                padding: 20px;
+            }
+            
+            h2 {
+                font-size: 1.2em;
+            }
+            
+            input[type="number"], select, button {
+                padding: 12px;
+                font-size: 14px;
+            }
+            
+            #timerResult {
+                font-size: 24px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="switchableApp">
+        <h2>Select an option:</h2>
+        <select id="modeSelector">
+            <option value="calculator">Calculator</option>
+            <option value="timer">Timer</option>
+        </select>
+        <div id="mainContent"></div>
+        <button onclick="stop()">Stop</button>
+    </div>
+
+    <script>
+        let mainContent = document.getElementById('mainContent');
+        let currentMode = 'calculator';
+        let countdownInterval = null;
+        let remainingTime = 0;
+        let isPaused = false;
+
+        function showCalculator() {
+            mainContent.innerHTML = `
+                <input type="number" id="num1" placeholder="Number 1" />
+                <select id="operator">
+                    <option value="add">+</option>
+                    <option value="subtract">-</option>
+                    <option value="multiply">*</option>
+                    <option value="divide">/</option>
+                </select>
+                <input type="number" id="num2" placeholder="Number 2" />
+                <button onclick="calculate()">Calculate</button>
+                <p id="calcResult"></p>
+            `;
+            currentMode = 'calculator';
+        }
+
+        function showTimer() {
+            mainContent.innerHTML = `
+                <input type="number" id="time" placeholder="Time in seconds" />
+                <button onclick="startTimer()">Start</button>
+                <button onclick="pauseTimer()">Pause</button>
+                <button onclick="resumeTimer()">Resume</button>
+                <p id="timerResult">00:00</p>
+            `;
+            currentMode = 'timer';
+        }
+
+        function calculate() {
+            const num1 = parseFloat(document.getElementById('num1').value);
+            const num2 = parseFloat(document.getElementById('num2').value);
+            const operator = document.getElementById('operator').value;
+            let result = 0;
+
+            if (isNumber(num1) && isNumber(num2)) {
+                switch (operator) {
+                    case 'add':
+                        result = num1 + num2;
+                        break;
+                    case 'subtract':
+                        result = num1 - num2;
+                        break;
+                    case 'multiply':
+                        result = num1 * num2;
+                        break;
+                    case 'divide':
+                        if (num2 !== 0) {
+                            result = num1 / num2;
+                        } else {
+                            alert('Division by zero is not allowed');
+                            return;
+                        }
+                        break;
+                }
+                document.getElementById('calcResult').innerText = `Result: ${result}`;
+            }
+        }
+
+        function startTimer() {
+            const time = parseInt(document.getElementById('time').value);
+
+            if (!isNaN(time) && time > 0) {
+                clearInterval(countdownInterval); 
+                remainingTime = time;
+                isPaused = false;
+
+                countdownInterval = setInterval(runTimer, 1000);
+            }
+        }
+
+        function runTimer() {
+    if (remainingTime > 0) {
+        const hours = Math.floor(remainingTime / 3600);
+        const minutes = Math.floor((remainingTime % 3600) / 60);
+        const seconds = Math.floor(remainingTime % 60);
+
+        let timeDisplay = '';
+
+        if (hours > 0) {
+            timeDisplay = `${hours.toString().padStart(2, '0')}:` +
+                          `${minutes.toString().padStart(2, '0')}:` +
+                          `${seconds.toString().padStart(2, '0')}`;
+        } else {
+            timeDisplay = `${minutes.toString().padStart(2, '0')}:` +
+                          `${seconds.toString().padStart(2, '0')}`;
+        }
+
+        document.getElementById('timerResult').innerText = timeDisplay;
+        remainingTime--;
+    } else {
+        clearInterval(countdownInterval);
+        document.getElementById('timerResult').innerText = 'Time Up!';
+    }
+}
+
+
+        function pauseTimer() {
+            if (countdownInterval) {
+                clearInterval(countdownInterval);
+                isPaused = true;
+            }
+        }
+
+        function resumeTimer() {
+            if (isPaused && remainingTime > 0) {
+                countdownInterval = setInterval(runTimer, 1000);
+                isPaused = false;
+            }
+        }
+
+        function stop() {
+            clearInterval(countdownInterval);
+            remainingTime = 0;
+            isPaused = false;
+            if (currentMode === 'timer') {
+                document.getElementById('timerResult').innerText = '00:00';
+            } else if (currentMode === 'calculator') {
+                document.getElementById('calcResult').innerText = '';
+            }
+        }
+
+        function isNumber(value) {
+            return !isNaN(parseFloat(value)) && isFinite(value);
+        }
+
+        function handleModeSwitch() {
+            stop();
+            const selectedMode = document.getElementById('modeSelector').value;
+            if (selectedMode === 'calculator') {
+                showCalculator();
+            } else if (selectedMode === 'timer') {
+                showTimer();
+            }
+        }
+
+        document.getElementById('modeSelector').addEventListener('change', handleModeSwitch);
+
+        showCalculator(); // Show calculator by default
+    </script>
+</body>
+</html>
